@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mosaicora_opengraph>
+            <general>
+                <enabled>1</enabled>
+                <twitter_enabled>1</twitter_enabled>
+                <twitter_card>summary_large_image</twitter_card>
+            </general>
+            <image_optimization>
+                <enabled>1</enabled>
+                <width>1200</width>
+                <height>630</height>
+                <resize_mode>scale</resize_mode>
+                <background_color>255,255,255</background_color>
+            </image_optimization>
+            <product>
+                <title_attribute>meta_title</title_attribute>
+                <description_attribute>meta_description</description_attribute>
+                <image_attribute>open_graph_image</image_attribute>
+            </product>
+            <category>
+                <title_attribute>meta_title</title_attribute>
+                <description_attribute>meta_description</description_attribute>
+            </category>
+            <cms>
+                <title_attribute>meta_title</title_attribute>
+                <description_attribute>meta_description</description_attribute>
+            </cms>
+        </mosaicora_opengraph>
+    </default>
+</config>

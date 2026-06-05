@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="cache.additional">
+            <block class="Mosaicora\OpenGraph\Block\Cache\OpenGraphImages" name="mosaicora.opengraph.cache.images" template="Mosaicora_OpenGraph::system/cache/open_graph_images.phtml"/>
+        </referenceBlock>
+    </body>
+</page>

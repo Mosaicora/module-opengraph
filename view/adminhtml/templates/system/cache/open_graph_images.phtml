@@ -1,0 +1,18 @@
+<?php
+/**
+ * Copyright © 2026 Mosaicora.io. All rights reserved.
+ */
+
+declare(strict_types=1);
+
+/** @var \Mosaicora\OpenGraph\Block\Cache\OpenGraphImages $block */
+?>
+<?php if ($block->hasAccessToFlushOpenGraphImages()): ?>
+    <form method="post" action="<?= $escaper->escapeUrl($block->getCleanOpenGraphImagesUrl()); ?>">
+        <input type="hidden" name="form_key" value="<?= $escaper->escapeHtmlAttr($block->getFormKey()); ?>"/>
+        <button id="flushOpenGraphImages" type="submit">
+            <?= $escaper->escapeHtml(__('Flush Open Graph Images Cache')); ?>
+        </button>
+        <span><?= $escaper->escapeHtml(__('Generated optimized Open Graph image files')); ?></span>
+    </form>
+<?php endif; ?>

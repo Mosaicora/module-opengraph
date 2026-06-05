@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<ruleset name="Mosaicora OpenGraph">
+    <description>Magento 2 coding standard for the Mosaicora_OpenGraph module.</description>
+
+    <config name="php_version" value="80300"/>
+
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="report-width" value="120"/>
+    <arg name="extensions" value="php,phtml"/>
+
+    <file>Api</file>
+    <file>Block</file>
+    <file>Controller</file>
+    <file>Model</file>
+    <file>Observer</file>
+    <file>Plugin</file>
+    <file>Setup</file>
+    <file>registration.php</file>
+
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>Test/*</exclude-pattern>
+    <exclude-pattern>*/Test/*</exclude-pattern>
+    <exclude-pattern>.git/*</exclude-pattern>
+    <exclude-pattern>*/.git/*</exclude-pattern>
+    <exclude-pattern>.phpunit.cache/*</exclude-pattern>
+    <exclude-pattern>*/.phpunit.cache/*</exclude-pattern>
+
+    <rule ref="Magento2">
+        <exclude name="Squiz.CSS.NamedColours"/>
+        <exclude name="Magento2.Annotation.MethodAnnotationStructure"/>
+        <exclude name="Magento2.Annotation.MethodArguments"/>
+        <exclude name="Magento2.Commenting.ClassPropertyPHPDocFormatting.Missing"/>
+    </rule>
+</ruleset>

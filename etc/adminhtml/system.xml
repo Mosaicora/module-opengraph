@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="mosaicora" translate="label" sortOrder="300">
+            <label>Mosaicora</label>
+        </tab>
+        <section id="mosaicora_opengraph" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Open Graph</label>
+            <tab>mosaicora</tab>
+            <resource>Mosaicora_OpenGraph::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Open Graph Tags</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="site_name" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Site Name</label>
+                </field>
+                <field id="default_image" translate="label comment" type="image" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default Image</label>
+                    <comment>Used when a page does not resolve a more specific Open Graph image.</comment>
+                    <backend_model>Mosaicora\OpenGraph\Model\Config\Backend\DefaultImage</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">mosaicora/opengraph/default</upload_dir>
+                    <base_url type="media" scope_info="1">mosaicora/opengraph/default</base_url>
+                </field>
+                <field id="twitter_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Twitter Card Tags</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="twitter_card" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Twitter Card Type</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\TwitterCard</source_model>
+                </field>
+            </group>
+            <group id="image_optimization" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Image Optimization</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Serve Optimized OG Image</label>
+                    <comment>Creates a cached social-preview image from local Magento media images. External image URLs are left unchanged.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="width" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Width</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                </field>
+                <field id="height" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Height</label>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                </field>
+                <field id="resize_mode" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Resize Mode</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\ResizeMode</source_model>
+                </field>
+                <field id="background_color" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Background Color</label>
+                    <comment>RGB value used by Scale mode, for example: 255,255,255.</comment>
+                </field>
+            </group>
+            <group id="product" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Defaults</label>
+                <field id="title_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title Attribute</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\ProductTextAttribute</source_model>
+                </field>
+                <field id="description_attribute" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Description Attribute</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\ProductTextAttribute</source_model>
+                </field>
+                <field id="image_attribute" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Image Attribute</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\ProductImageAttribute</source_model>
+                </field>
+            </group>
+            <group id="category" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Category Defaults</label>
+                <field id="title_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title Attribute</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\CategoryTextAttribute</source_model>
+                </field>
+                <field id="description_attribute" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Description Attribute</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\CategoryTextAttribute</source_model>
+                </field>
+            </group>
+            <group id="cms" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>CMS Defaults</label>
+                <field id="title_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title Field</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\CmsField</source_model>
+                </field>
+                <field id="description_attribute" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Description Field</label>
+                    <source_model>Mosaicora\OpenGraph\Model\Config\Source\CmsField</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

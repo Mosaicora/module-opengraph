@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/mosaicora/opengraph/product/:sku" method="GET">
+        <service class="Mosaicora\OpenGraph\Api\OpenGraphMetadataInterface" method="getProduct"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/mosaicora/opengraph/category/:categoryId" method="GET">
+        <service class="Mosaicora\OpenGraph\Api\OpenGraphMetadataInterface" method="getCategory"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/mosaicora/opengraph/cms/:identifier" method="GET">
+        <service class="Mosaicora\OpenGraph\Api\OpenGraphMetadataInterface" method="getCms"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/mosaicora/opengraph/home" method="GET">
+        <service class="Mosaicora\OpenGraph\Api\OpenGraphMetadataInterface" method="getHome"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>

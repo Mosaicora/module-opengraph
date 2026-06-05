@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="cms_page_prepare_save">
+        <observer name="mosaicora_opengraph_prepare_cms_image" instance="Mosaicora\OpenGraph\Model\Cms\OpenGraphImageProcessor"/>
+    </event>
+</config>

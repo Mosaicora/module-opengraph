@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="open_graph" sortOrder="25">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Open Graph</label>
+        </settings>
+        <field name="og_title_mode" sortOrder="10" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                    <item name="default" xsi:type="string">auto</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Title Source</label>
+                <dataScope>og_title_mode</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Mosaicora\OpenGraph\Model\Config\Source\Mode"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="og_title_attribute" sortOrder="20" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Title Field</label>
+                <dataScope>og_title_attribute</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Mosaicora\OpenGraph\Model\Config\Source\CmsField"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="og_title_custom" sortOrder="30" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Custom Title</label>
+                <dataScope>og_title_custom</dataScope>
+            </settings>
+        </field>
+        <field name="og_description_mode" sortOrder="40" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                    <item name="default" xsi:type="string">auto</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Description Source</label>
+                <dataScope>og_description_mode</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Mosaicora\OpenGraph\Model\Config\Source\Mode"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="og_description_attribute" sortOrder="50" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Description Field</label>
+                <dataScope>og_description_attribute</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Mosaicora\OpenGraph\Model\Config\Source\CmsField"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="og_description_custom" sortOrder="60" formElement="textarea">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Custom Description</label>
+                <dataScope>og_description_custom</dataScope>
+            </settings>
+        </field>
+        <field name="og_image_mode" sortOrder="70" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                    <item name="default" xsi:type="string">auto</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Image Source</label>
+                <dataScope>og_image_mode</dataScope>
+                <switcherConfig>
+                    <rules>
+                        <rule name="0">
+                            <value>auto</value>
+                            <actions>
+                                <action name="0">
+                                    <target>cms_page_form.cms_page_form.open_graph.og_image_custom</target>
+                                    <callback>hide</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                        <rule name="1">
+                            <value>custom</value>
+                            <actions>
+                                <action name="0">
+                                    <target>cms_page_form.cms_page_form.open_graph.og_image_custom</target>
+                                    <callback>show</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                    </rules>
+                    <enabled>true</enabled>
+                </switcherConfig>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Mosaicora\OpenGraph\Model\Config\Source\ImageMode"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="og_image_custom" sortOrder="80" formElement="imageUploader">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">page</item>
+                </item>
+            </argument>
+            <settings>
+                <elementTmpl>ui/form/element/uploader/image</elementTmpl>
+                <dataType>string</dataType>
+                <label translate="true">Open Graph Image</label>
+                <dataScope>og_image_custom</dataScope>
+                <visible>true</visible>
+                <required>false</required>
+            </settings>
+            <formElements>
+                <imageUploader>
+                    <settings>
+                        <required>false</required>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="mosaicora_opengraph/cms_image/upload"/>
+                        </uploaderConfig>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <openDialogTitle>Media Gallery</openDialogTitle>
+                        <initialMediaGalleryOpenSubpath>mosaicora/opengraph</initialMediaGalleryOpenSubpath>
+                        <allowedExtensions>jpg jpeg gif png webp</allowedExtensions>
+                        <maxFileSize>4194304</maxFileSize>
+                    </settings>
+                </imageUploader>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

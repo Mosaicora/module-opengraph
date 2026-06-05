@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="cms_page" resource="default" engine="innodb" comment="CMS Page Table">
+        <column xsi:type="varchar" name="og_title_mode" nullable="true" length="32" comment="Open Graph Title Source"/>
+        <column xsi:type="varchar" name="og_title_attribute" nullable="true" length="64" comment="Open Graph Title Field"/>
+        <column xsi:type="varchar" name="og_title_custom" nullable="true" length="255" comment="Open Graph Custom Title"/>
+        <column xsi:type="varchar" name="og_description_mode" nullable="true" length="32" comment="Open Graph Description Source"/>
+        <column xsi:type="varchar" name="og_description_attribute" nullable="true" length="64" comment="Open Graph Description Field"/>
+        <column xsi:type="text" name="og_description_custom" nullable="true" comment="Open Graph Custom Description"/>
+        <column xsi:type="varchar" name="og_image_mode" nullable="true" length="32" comment="Open Graph Image Source"/>
+        <column xsi:type="varchar" name="og_image_custom" nullable="true" length="255" comment="Open Graph Custom Image"/>
+    </table>
+</schema>

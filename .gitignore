@@ -1,0 +1,54 @@
+# OS and editor files
+/.idea/
+/.vscode/
+/.fleet/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local configuration and credentials
+/.env
+/.env.*
+!/.env.example
+/auth.json
+/phpunit.xml
+/phpunit.xml.bak
+
+# Composer dependencies
+/vendor/
+/composer.lock
+/composer.phar
+
+# Optional frontend tooling
+/node_modules/
+/.pnpm-store/
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+
+# Tests, coverage, and quality-tool caches
+/.phpunit.cache/
+/.phpunit.result.cache
+/.phpcs-cache
+/.php-cs-fixer.cache
+/.phpstan.cache
+/.phpstan/
+/.rector/
+/.cache/
+/coverage/
+
+# Build and package output
+/build/
+/dist/
+/*.zip
+/*.tar
+/*.tar.gz
+/*.tgz
+
+# Magento runtime output when the module is tested standalone
+/generated/
+/var/
+/pub/static/
+/pub/media/

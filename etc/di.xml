@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Mosaicora\OpenGraph\Api\OpenGraphMetadataInterface" type="Mosaicora\OpenGraph\Model\Api\OpenGraphMetadata"/>
+    <preference for="Mosaicora\OpenGraph\Api\Data\OpenGraphMetadataInterface" type="Mosaicora\OpenGraph\Model\Data\OpenGraphMetadata"/>
+    <preference for="Mosaicora\OpenGraph\Api\Data\OpenGraphTagInterface" type="Mosaicora\OpenGraph\Model\Data\OpenGraphTag"/>
+    <type name="Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="product" xsi:type="object">Mosaicora\OpenGraph\Model\Builder\ProductTagBuilder</item>
+                <item name="category" xsi:type="object">Mosaicora\OpenGraph\Model\Builder\CategoryTagBuilder</item>
+                <item name="cms" xsi:type="object">Mosaicora\OpenGraph\Model\Builder\CmsTagBuilder</item>
+                <item name="home" xsi:type="object">Mosaicora\OpenGraph\Model\Builder\HomeTagBuilder</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Backend\Block\Cache\Permissions">
+        <plugin name="mosaicora_opengraph_cache_permissions" type="Mosaicora\OpenGraph\Plugin\Cache\PermissionsPlugin"/>
+    </type>
+    <type name="Magento\Cms\Model\Page\DataProvider">
+        <plugin name="mosaicora_opengraph_cms_page_data_provider" type="Mosaicora\OpenGraph\Plugin\Cms\PageDataProviderPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="mosaicora_opengraph_category_meta" type="Mosaicora\OpenGraph\Plugin\Category\DataProviderMetaPlugin"/>
+    </type>
+    <virtualType name="Mosaicora\OpenGraph\ImageUpload" type="Magento\Catalog\Model\ImageUploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">mosaicora/opengraph/tmp</argument>
+            <argument name="basePath" xsi:type="string">mosaicora/opengraph</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="png" xsi:type="string">png</item>
+                <item name="webp" xsi:type="string">webp</item>
+            </argument>
+            <argument name="allowedMimeTypes" xsi:type="array">
+                <item name="jpg" xsi:type="string">image/jpg</item>
+                <item name="jpeg" xsi:type="string">image/jpeg</item>
+                <item name="gif" xsi:type="string">image/gif</item>
+                <item name="png" xsi:type="string">image/png</item>
+                <item name="webp" xsi:type="string">image/webp</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Mosaicora\OpenGraph\Controller\Adminhtml\AbstractImageUpload">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">Mosaicora\OpenGraph\ImageUpload</argument>
+        </arguments>
+    </type>
+    <type name="Mosaicora\OpenGraph\Model\Category\Attribute\Backend\OpenGraphImage">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">Mosaicora\OpenGraph\ImageUpload</argument>
+        </arguments>
+    </type>
+    <type name="Mosaicora\OpenGraph\Model\Cms\OpenGraphImageProcessor">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">Mosaicora\OpenGraph\ImageUpload</argument>
+        </arguments>
+    </type>
+</config>

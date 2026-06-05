@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2026 Mosaicora.io. All rights reserved.
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\CatalogGraphQl\Model\AttributesJoiner">
+        <arguments>
+            <argument name="fieldToAttributeMap" xsi:type="array">
+                <item name="open_graph" xsi:type="array">
+                    <item name="og_title_mode" xsi:type="string">og_title_mode</item>
+                    <item name="og_title_attribute" xsi:type="string">og_title_attribute</item>
+                    <item name="og_title_custom" xsi:type="string">og_title_custom</item>
+                    <item name="og_description_mode" xsi:type="string">og_description_mode</item>
+                    <item name="og_description_attribute" xsi:type="string">og_description_attribute</item>
+                    <item name="og_description_custom" xsi:type="string">og_description_custom</item>
+                    <item name="meta_title" xsi:type="string">meta_title</item>
+                    <item name="meta_description" xsi:type="string">meta_description</item>
+                    <item name="name" xsi:type="string">name</item>
+                    <item name="description" xsi:type="string">description</item>
+                    <item name="image" xsi:type="string">image</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

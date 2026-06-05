@@ -1,0 +1,28 @@
+interface ProductInterface {
+    open_graph: MosaicoraOpenGraphMetadata! @resolver(class: "Mosaicora\\OpenGraph\\Model\\GraphQl\\Resolver\\ProductOpenGraph") @doc(description: "Return resolved Open Graph metadata for the product.")
+}
+
+interface CategoryInterface {
+    open_graph: MosaicoraOpenGraphMetadata! @resolver(class: "Mosaicora\\OpenGraph\\Model\\GraphQl\\Resolver\\CategoryOpenGraph") @doc(description: "Return resolved Open Graph metadata for the category.")
+}
+
+type CmsPage {
+    open_graph: MosaicoraOpenGraphMetadata! @resolver(class: "Mosaicora\\OpenGraph\\Model\\GraphQl\\Resolver\\CmsOpenGraph") @doc(description: "Return resolved Open Graph metadata for the CMS page.")
+}
+
+type StoreConfig {
+    home_open_graph: MosaicoraOpenGraphMetadata! @resolver(class: "Mosaicora\\OpenGraph\\Model\\GraphQl\\Resolver\\HomeOpenGraph") @doc(description: "Return resolved Open Graph metadata for the store home page.") @cache(cacheIdentity: "Mosaicora\\OpenGraph\\Model\\GraphQl\\Resolver\\HomeIdentity")
+}
+
+type MosaicoraOpenGraphMetadata {
+    page_type: String!
+    identifier: String!
+    store_id: Int!
+    enabled: Boolean!
+    tags: [MosaicoraOpenGraphTag!]!
+}
+
+type MosaicoraOpenGraphTag {
+    name: String!
+    content: String!
+}
