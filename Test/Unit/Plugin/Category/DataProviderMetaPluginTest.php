@@ -62,6 +62,7 @@ class DataProviderMetaPluginTest extends TestCase
         self::assertSame('custom', $imageModeConfig['switcherConfig']['rules'][1]['value']);
 
         self::assertSame('imageUploader', $imageConfig['formElement']);
+        self::assertSame('string', $imageConfig['dataType']);
         self::assertSame('og_image_custom', $imageConfig['dataScope']);
         self::assertSame('category', $imageConfig['source']);
         self::assertSame(

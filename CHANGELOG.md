@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The project follows a simple, human-readable release log.
 
+## [1.0.1]
+
+- Fixed custom Open Graph images not being saved on categories.
+
 ## [1.0.0] - 2026-06-06
 
 - Open Graph metadata support for product, category, CMS, and home pages.

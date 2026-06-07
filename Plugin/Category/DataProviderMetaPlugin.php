@@ -79,6 +79,7 @@ class DataProviderMetaPlugin
         ];
 
         $overrides['og_image_custom']['arguments']['data']['config'] = [
+            'dataType' => 'string',
             'formElement' => 'imageUploader',
             'elementTmpl' => 'ui/form/element/uploader/image',
             'previewTmpl' => 'Magento_Catalog/image-preview',
