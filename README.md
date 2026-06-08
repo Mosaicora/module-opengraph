@@ -33,7 +33,7 @@ The module resolves the active storefront context and applies metadata during la
 Install the package through Composer:
 
 ```bash
-composer require mosaicora/module-opengraph:1.0.0
+composer require mosaicora/module-opengraph
 ```
 
 Run the normal Magento upgrade and cache workflow:
