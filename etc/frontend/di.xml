@@ -7,4 +7,8 @@
     <type name="Magento\Framework\View\Page\Config\Renderer">
         <plugin name="mosaicora_opengraph_render_metadata" type="Mosaicora\OpenGraph\Plugin\RenderMetadataPlugin"/>
     </type>
+    <type name="Magento\Framework\App\Response\Http">
+        <plugin name="mosaicora_opengraph_deduplicate_metadata"
+                type="Mosaicora\OpenGraph\Plugin\DeduplicateMetadataPlugin"/>
+    </type>
 </config>

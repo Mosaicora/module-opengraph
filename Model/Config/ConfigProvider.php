@@ -17,6 +17,7 @@ class ConfigProvider
     public const XML_PATH_DEFAULT_IMAGE = 'mosaicora_opengraph/general/default_image';
     public const XML_PATH_TWITTER_ENABLED = 'mosaicora_opengraph/general/twitter_enabled';
     public const XML_PATH_TWITTER_CARD = 'mosaicora_opengraph/general/twitter_card';
+    public const XML_PATH_REMOVE_COMPETING_TAGS = 'mosaicora_opengraph/general/remove_competing_tags';
     public const XML_PATH_IMAGE_OPTIMIZATION_ENABLED = 'mosaicora_opengraph/image_optimization/enabled';
     public const XML_PATH_IMAGE_OPTIMIZATION_WIDTH = 'mosaicora_opengraph/image_optimization/width';
     public const XML_PATH_IMAGE_OPTIMIZATION_HEIGHT = 'mosaicora_opengraph/image_optimization/height';
@@ -42,6 +43,15 @@ class ConfigProvider
     public function isTwitterEnabled(?int $storeId = null): bool
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_TWITTER_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    public function isRemoveCompetingTagsEnabled(?int $storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_REMOVE_COMPETING_TAGS,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
     public function getSiteName(?int $storeId = null): string

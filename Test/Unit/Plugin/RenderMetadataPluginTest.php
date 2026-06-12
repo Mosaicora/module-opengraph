@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Mosaicora\OpenGraph\Test\Unit\Plugin;
 
 use Magento\Framework\View\Page\Config\Renderer;
+use Mosaicora\OpenGraph\Model\Applier\AppliedTagRegistry;
 use Mosaicora\OpenGraph\Model\Applier\MetaTagApplier;
 use Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
@@ -30,7 +31,8 @@ class RenderMetadataPluginTest extends TestCase
             $config,
             $contextResolver,
             $this->createStub(CompositeTagBuilder::class),
-            $this->createStub(MetaTagApplier::class)
+            $this->createStub(MetaTagApplier::class),
+            $this->createStub(AppliedTagRegistry::class)
         );
 
         $plugin->beforeRenderMetadata($this->createStub(Renderer::class));
@@ -58,7 +60,12 @@ class RenderMetadataPluginTest extends TestCase
             ->method('apply')
             ->with($tags);
 
-        $plugin = new RenderMetadataPlugin($config, $contextResolver, $tagBuilder, $tagApplier);
+        $tagRegistry = $this->createMock(AppliedTagRegistry::class);
+        $tagRegistry->expects($this->once())
+            ->method('set')
+            ->with($tags);
+
+        $plugin = new RenderMetadataPlugin($config, $contextResolver, $tagBuilder, $tagApplier, $tagRegistry);
 
         $plugin->beforeRenderMetadata($this->createStub(Renderer::class));
     }
@@ -69,7 +76,8 @@ class RenderMetadataPluginTest extends TestCase
             $this->createStub(ConfigProvider::class),
             $this->createStub(PageContextResolver::class),
             $this->createStub(CompositeTagBuilder::class),
-            $this->createStub(MetaTagApplier::class)
+            $this->createStub(MetaTagApplier::class),
+            $this->createStub(AppliedTagRegistry::class)
         );
 
         self::assertSame(

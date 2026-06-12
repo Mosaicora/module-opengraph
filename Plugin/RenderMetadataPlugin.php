@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Mosaicora\OpenGraph\Plugin;
 
 use Magento\Framework\View\Page\Config\Renderer;
+use Mosaicora\OpenGraph\Model\Applier\AppliedTagRegistry;
 use Mosaicora\OpenGraph\Model\Applier\MetaTagApplier;
 use Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
@@ -19,7 +20,8 @@ class RenderMetadataPlugin
         private readonly ConfigProvider $config,
         private readonly PageContextResolver $contextResolver,
         private readonly CompositeTagBuilder $tagBuilder,
-        private readonly MetaTagApplier $tagApplier
+        private readonly MetaTagApplier $tagApplier,
+        private readonly AppliedTagRegistry $tagRegistry
     ) {
     }
 
@@ -34,7 +36,9 @@ class RenderMetadataPlugin
             return;
         }
 
-        $this->tagApplier->apply($this->tagBuilder->build($context));
+        $tags = $this->tagBuilder->build($context);
+        $this->tagApplier->apply($tags);
+        $this->tagRegistry->set($tags);
     }
 
     public function afterRenderMetadata(Renderer $subject, string $result): string

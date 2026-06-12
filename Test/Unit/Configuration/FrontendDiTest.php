@@ -19,5 +19,7 @@ class FrontendDiTest extends TestCase
 
         self::assertStringNotContainsString('mosaicora_opengraph_render_metadata', $globalDi);
         self::assertStringContainsString('mosaicora_opengraph_render_metadata', $frontendDi);
+        self::assertStringNotContainsString('mosaicora_opengraph_deduplicate_metadata', $globalDi);
+        self::assertStringContainsString('mosaicora_opengraph_deduplicate_metadata', $frontendDi);
     }
 }

@@ -10,6 +10,7 @@
                 <enabled>1</enabled>
                 <twitter_enabled>1</twitter_enabled>
                 <twitter_card>summary_large_image</twitter_card>
+                <remove_competing_tags>0</remove_competing_tags>
             </general>
             <image_optimization>
                 <enabled>1</enabled>
