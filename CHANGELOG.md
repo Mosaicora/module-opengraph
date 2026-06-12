@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The project follows a simple, human-readable release log.
 
-## Unreleased
+## [1.0.2] - 2026-06-12
 
 - Added an optional, store-scoped setting that removes competing social metadata tags and keeps Mosaicora's values.
+- Stripped HTML markup from resolved Open Graph and Twitter Card text values.
 
 ## [1.0.1] - 2026-06-07
 
@@ -24,3 +25,5 @@ The project follows a simple, human-readable release log.
 - Admin upload endpoints and generated image cache management.
 
 [1.0.0]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.0
+[1.0.1]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.1
+[1.0.2]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.2

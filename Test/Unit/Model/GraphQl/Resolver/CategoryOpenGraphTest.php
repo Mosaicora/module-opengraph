@@ -104,9 +104,18 @@ class CategoryOpenGraphTest extends TestCase
     {
         $store = $this->createStub(StoreInterface::class);
         $store->method('getId')->willReturn(7);
-        $extension = new class ($store) implements ContextExtensionInterface {
+        $extension = $this->contextExtension($store);
+        $context = $this->createStub(ContextInterface::class);
+        $context->method('getExtensionAttributes')->willReturn($extension);
+
+        return $context;
+    }
+
+    private function contextExtension(StoreInterface $store): ContextExtensionInterface
+    {
+        return new class ($store) implements ContextExtensionInterface {
             public function __construct(
-                private readonly StoreInterface $store
+                private StoreInterface $store
             ) {
             }
 
@@ -114,11 +123,33 @@ class CategoryOpenGraphTest extends TestCase
             {
                 return $this->store;
             }
-        };
-        $context = $this->createStub(ContextInterface::class);
-        $context->method('getExtensionAttributes')->willReturn($extension);
 
-        return $context;
+            public function setStore(StoreInterface $store): self
+            {
+                $this->store = $store;
+                return $this;
+            }
+
+            public function getIsCustomer(): bool
+            {
+                return false;
+            }
+
+            public function setIsCustomer(bool $isCustomer): self
+            {
+                return $this;
+            }
+
+            public function getCustomerGroupId(): int
+            {
+                return 0;
+            }
+
+            public function setCustomerGroupId(int $customerGroupId): self
+            {
+                return $this;
+            }
+        };
     }
 
     private function metadata(string $identifier): OpenGraphMetadata
