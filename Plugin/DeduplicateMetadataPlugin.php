@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Mosaicora\OpenGraph\Plugin;
 
 use Magento\Framework\App\Response\Http;
-use Mosaicora\OpenGraph\Model\Applier\AppliedTagRegistry;
 use Mosaicora\OpenGraph\Model\Applier\HeadMetadataDeduplicator;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
 
@@ -16,7 +15,6 @@ class DeduplicateMetadataPlugin
 {
     public function __construct(
         private readonly ConfigProvider $config,
-        private readonly AppliedTagRegistry $tagRegistry,
         private readonly HeadMetadataDeduplicator $deduplicator
     ) {
     }
@@ -35,6 +33,6 @@ class DeduplicateMetadataPlugin
             return $proceed($value);
         }
 
-        return $proceed($this->deduplicator->process($value, $this->tagRegistry->get()));
+        return $proceed($this->deduplicator->process($value));
     }
 }

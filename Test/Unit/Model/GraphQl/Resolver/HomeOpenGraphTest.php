@@ -7,39 +7,45 @@ declare(strict_types=1);
 
 namespace Mosaicora\OpenGraph\Test\Unit\Model\GraphQl\Resolver;
 
+use Magento\Cms\Model\Page;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Mosaicora\OpenGraph\Model\Data\OpenGraphMetadata;
 use Mosaicora\OpenGraph\Model\GraphQl\MetadataFormatter;
-use Mosaicora\OpenGraph\Model\GraphQl\Resolver\CmsOpenGraph;
+use Mosaicora\OpenGraph\Model\GraphQl\Resolver\HomeOpenGraph;
 use Mosaicora\OpenGraph\Model\MetadataProvider;
 use Mosaicora\OpenGraph\Test\Unit\Stub\GraphQlContextExtension;
 use PHPUnit\Framework\TestCase;
 
-class CmsOpenGraphTest extends TestCase
+class HomeOpenGraphTest extends TestCase
 {
-    public function testResolvesCmsMetadataByParentIdentifierAndStore(): void
+    public function testUsesLoadedPageForMetadataAndCacheIdentities(): void
     {
+        $page = $this->createStub(Page::class);
+        $page->method('getId')->willReturn(42);
         $metadata = new OpenGraphMetadata();
-        $metadata->setPageType('cms')
-            ->setIdentifier('about-us')
+        $metadata->setPageType('home')
+            ->setIdentifier('home')
             ->setStoreId(7)
             ->setEnabled(true)
             ->setTags([]);
-        $provider = $this->createMock(MetadataProvider::class);
-        $provider->expects($this->once())->method('getCms')->with('about-us', 7)->willReturn($metadata);
 
-        $result = (new CmsOpenGraph($provider, new MetadataFormatter()))->resolve(
+        $provider = $this->createMock(MetadataProvider::class);
+        $provider->expects($this->once())->method('getHomePage')->with(7)->willReturn($page);
+        $provider->expects($this->once())
+            ->method('getHomeWithPage')
+            ->with(7, $page)
+            ->willReturn($metadata);
+
+        $result = (new HomeOpenGraph($provider, new MetadataFormatter()))->resolve(
             $this->createStub(Field::class),
             $this->context(),
-            $this->createStub(ResolveInfo::class),
-            ['identifier' => 'about-us']
+            $this->createStub(ResolveInfo::class)
         );
 
-        self::assertSame('about-us', $result['identifier']);
-        self::assertSame(7, $result['store_id']);
+        self::assertContains(Page::CACHE_TAG . '_42', $result['_cache_identities']);
     }
 
     private function context(): ContextInterface

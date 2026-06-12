@@ -9,7 +9,6 @@ namespace Mosaicora\OpenGraph\Test\Unit\Plugin;
 
 use Laminas\Http\Header\ContentType;
 use Magento\Framework\App\Response\Http;
-use Mosaicora\OpenGraph\Model\Applier\AppliedTagRegistry;
 use Mosaicora\OpenGraph\Model\Applier\HeadMetadataDeduplicator;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
 use Mosaicora\OpenGraph\Plugin\DeduplicateMetadataPlugin;
@@ -34,7 +33,6 @@ class DeduplicateMetadataPluginTest extends TestCase
             $response,
             (new DeduplicateMetadataPlugin(
                 $config,
-                $this->createStub(AppliedTagRegistry::class),
                 $deduplicator
             ))->aroundAppendBody(
                 $response,
@@ -51,15 +49,11 @@ class DeduplicateMetadataPluginTest extends TestCase
     public function testProcessesHtmlWithAppliedTags(): void
     {
         $config = $this->enabledConfig();
-        $tags = ['og:title' => 'Mosaicora'];
-
-        $registry = $this->createStub(AppliedTagRegistry::class);
-        $registry->method('get')->willReturn($tags);
 
         $deduplicator = $this->createMock(HeadMetadataDeduplicator::class);
         $deduplicator->expects($this->once())
             ->method('process')
-            ->with('<html><head></head></html>', $tags)
+            ->with('<html><head></head></html>')
             ->willReturn('<html><head>deduplicated</head></html>');
 
         $response = $this->createStub(Http::class);
@@ -67,7 +61,7 @@ class DeduplicateMetadataPluginTest extends TestCase
 
         self::assertSame(
             $response,
-            (new DeduplicateMetadataPlugin($config, $registry, $deduplicator))->aroundAppendBody(
+            (new DeduplicateMetadataPlugin($config, $deduplicator))->aroundAppendBody(
                 $response,
                 static function (string $body) use ($response, &$appended): Http {
                     $appended = $body;
@@ -94,7 +88,6 @@ class DeduplicateMetadataPluginTest extends TestCase
             $response,
             (new DeduplicateMetadataPlugin(
                 $this->enabledConfig(),
-                $this->createStub(AppliedTagRegistry::class),
                 $deduplicator
             ))->aroundAppendBody(
                 $response,

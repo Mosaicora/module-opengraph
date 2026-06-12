@@ -7,29 +7,56 @@ declare(strict_types=1);
 
 namespace Mosaicora\OpenGraph\Model\Applier;
 
-use Magento\Framework\Escaper;
-
 class HeadMetadataDeduplicator
 {
-    public function __construct(
-        private readonly Escaper $escaper
-    ) {
-    }
+    private const MARKER_ATTRIBUTE = 'data-mosaicora-opengraph';
 
     /**
      * @param array<string, string> $tags
      */
-    public function process(string $html, array $tags): string
+    public function markCanonicalTags(string $metadata, array $tags): string
     {
-        if ($tags === [] || stripos($html, '<head') === false) {
-            return $html;
+        if ($tags === []) {
+            return $metadata;
         }
 
         $targets = array_fill_keys(array_map('strtolower', array_keys($tags)), true);
+        $result = preg_replace_callback(
+            '/<meta\b[^>]*>/is',
+            function (array $match) use ($targets): string {
+                $key = $this->getMetadataKey($match[0]);
+                if ($key === null || !isset($targets[strtolower($key)])) {
+                    return $match[0];
+                }
+
+                return (string)preg_replace(
+                    '/\s*(\/?>)$/',
+                    ' ' . self::MARKER_ATTRIBUTE . '="1"$1',
+                    $match[0],
+                    1
+                );
+            },
+            $metadata
+        );
+
+        return $result ?? $metadata;
+    }
+
+    public function process(string $html): string
+    {
+        if (stripos($html, '<head') === false || stripos($html, self::MARKER_ATTRIBUTE) === false) {
+            return $html;
+        }
 
         $result = preg_replace_callback(
             '/<head\b[^>]*>.*?<\/head\s*>/is',
-            function (array $headMatch) use ($targets, $tags): string {
+            function (array $headMatch): string {
+                $canonicalTags = $this->getCanonicalTags($headMatch[0]);
+                if ($canonicalTags === []) {
+                    return $headMatch[0];
+                }
+
+                $targets = array_fill_keys(array_keys($canonicalTags), true);
                 $head = preg_replace_callback(
                     '/<meta\b[^>]*>/is',
                     function (array $metaMatch) use ($targets): string {
@@ -44,11 +71,9 @@ class HeadMetadataDeduplicator
                     return $headMatch[0];
                 }
 
-                $metadata = $this->render($tags);
-
                 return (string)preg_replace(
                     '/<\/head\s*>$/i',
-                    $metadata . '</head>',
+                    implode('', $canonicalTags) . '</head>',
                     $head,
                     1
                 );
@@ -58,6 +83,35 @@ class HeadMetadataDeduplicator
         );
 
         return $result ?? $html;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getCanonicalTags(string $head): array
+    {
+        $canonicalTags = [];
+        preg_match_all('/<meta\b[^>]*>/is', $head, $matches);
+
+        foreach ($matches[0] as $tag) {
+            if (preg_match('/\s+' . self::MARKER_ATTRIBUTE . '\s*=\s*(["\'])1\1/i', $tag) !== 1) {
+                continue;
+            }
+
+            $key = $this->getMetadataKey($tag);
+            if ($key === null) {
+                continue;
+            }
+
+            $canonicalTags[strtolower($key)] = (string)preg_replace(
+                '/\s+' . self::MARKER_ATTRIBUTE . '\s*=\s*(["\'])1\1/i',
+                '',
+                $tag,
+                1
+            ) . "\n";
+        }
+
+        return $canonicalTags;
     }
 
     private function getMetadataKey(string $tag): ?string
@@ -71,25 +125,5 @@ class HeadMetadataDeduplicator
         }
 
         return null;
-    }
-
-    /**
-     * @param array<string, string> $tags
-     */
-    private function render(array $tags): string
-    {
-        $result = '';
-
-        foreach ($tags as $name => $content) {
-            $attribute = str_starts_with(strtolower($name), 'twitter:') ? 'name' : 'property';
-            $result .= sprintf(
-                '<meta %s="%s" content="%s"/>' . "\n",
-                $attribute,
-                $this->escaper->escapeHtmlAttr($name, false),
-                $this->escaper->escapeHtmlAttr($content, false)
-            );
-        }
-
-        return $result;
     }
 }

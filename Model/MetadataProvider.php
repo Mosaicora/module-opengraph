@@ -70,9 +70,12 @@ class MetadataProvider
 
     public function getHome(int $storeId): OpenGraphMetadataInterface
     {
-        $identifier = $this->getHomeIdentifier($storeId);
-        $page = $identifier !== '' ? $this->cmsPageLoader->load($identifier, $storeId) : null;
+        return $this->getHomeWithPage($storeId, $this->getHomePage($storeId));
+    }
 
+    public function getHomeWithPage(int $storeId, ?Page $page): OpenGraphMetadataInterface
+    {
+        $identifier = $this->getHomeIdentifier($storeId);
         return $this->build(
             PageContext::TYPE_HOME,
             $identifier,

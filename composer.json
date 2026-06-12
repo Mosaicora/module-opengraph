@@ -1,6 +1,6 @@
 {
     "name": "mosaicora/module-opengraph",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Open Graph and Twitter Card metadata module for Magento 2, Mage-OS, and Adobe Commerce, with image optimization, REST, and GraphQL APIs",
     "keywords": [
         "adobe commerce",

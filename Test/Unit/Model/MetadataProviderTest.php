@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Mosaicora\OpenGraph\Test\Unit\Model;
 
 use Magento\Catalog\Model\Product;
+use Magento\Cms\Model\Page;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder;
 use Mosaicora\OpenGraph\Model\CmsPageLoader;
@@ -59,9 +60,35 @@ class MetadataProviderTest extends TestCase
         self::assertSame([], $metadata->getTags());
     }
 
+    public function testBuildsHomeMetadataFromProvidedPageWithoutLoadingItAgain(): void
+    {
+        $page = $this->createStub(Page::class);
+        $scopeConfig = $this->createStub(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturn('home');
+        $loader = $this->createMock(CmsPageLoader::class);
+        $loader->expects($this->never())->method('load');
+        $config = $this->createStub(ConfigProvider::class);
+        $config->method('isEnabled')->willReturn(true);
+        $tagBuilder = $this->createMock(CompositeTagBuilder::class);
+        $tagBuilder->expects($this->once())
+            ->method('build')
+            ->with($this->callback(
+                static fn (PageContext $context): bool => $context->getType() === PageContext::TYPE_HOME
+                    && $context->getEntity() === $page
+            ))
+            ->willReturn([]);
+
+        $provider = $this->createProvider($config, $tagBuilder, $scopeConfig, $loader);
+        $metadata = $provider->getHomeWithPage(7, $page);
+
+        self::assertSame('home', $metadata->getIdentifier());
+    }
+
     private function createProvider(
         ConfigProvider $config,
-        CompositeTagBuilder $tagBuilder
+        CompositeTagBuilder $tagBuilder,
+        ?ScopeConfigInterface $scopeConfig = null,
+        ?CmsPageLoader $cmsPageLoader = null
     ): MetadataProvider {
         $sanitizer = $this->createStub(TextSanitizer::class);
         $sanitizer->method('clean')->willReturn('Example & title');
@@ -72,8 +99,8 @@ class MetadataProviderTest extends TestCase
 
         return new MetadataProvider(
             $config,
-            $this->createStub(ScopeConfigInterface::class),
-            $this->createStub(CmsPageLoader::class),
+            $scopeConfig ?? $this->createStub(ScopeConfigInterface::class),
+            $cmsPageLoader ?? $this->createStub(CmsPageLoader::class),
             $tagBuilder,
             $tagFactory
         );

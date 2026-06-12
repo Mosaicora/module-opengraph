@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Mosaicora\OpenGraph\Test\Unit\Model\Applier;
 
-use Magento\Framework\Escaper;
 use Mosaicora\OpenGraph\Model\Applier\HeadMetadataDeduplicator;
 use PHPUnit\Framework\TestCase;
 
@@ -30,14 +29,20 @@ class HeadMetadataDeduplicatorTest extends TestCase
 </html>
 HTML;
 
-        $result = $this->createDeduplicator()->process(
-            $html,
+        $deduplicator = new HeadMetadataDeduplicator();
+        $canonical = $deduplicator->markCanonicalTags(
+            <<<'HTML'
+<meta property="og:title" content="Mosaicora &quot;title&quot;"/>
+<meta property="og:image" content="https://example.test/image.jpg?a=1&amp;b=2"/>
+<meta name="twitter:title" content="Mosaicora title"/>
+HTML,
             [
                 'og:title' => 'Mosaicora "title"',
                 'og:image' => 'https://example.test/image.jpg?a=1&b=2',
                 'twitter:title' => 'Mosaicora title',
             ]
         );
+        $result = $deduplicator->process(str_replace('</head>', $canonical . '</head>', $html));
 
         self::assertSame(1, substr_count(strtolower($result), 'property="og:title"'));
         self::assertSame(1, substr_count(strtolower($result), 'property="og:image"'));
@@ -51,29 +56,44 @@ HTML;
         self::assertStringNotContainsString('Core image', $result);
     }
 
-    public function testLeavesHtmlUnchangedWithoutTagsOrHead(): void
+    public function testLeavesHtmlUnchangedWithoutMarkersOrHead(): void
     {
-        $deduplicator = $this->createDeduplicator();
+        $deduplicator = new HeadMetadataDeduplicator();
 
-        self::assertSame('<html><head></head></html>', $deduplicator->process('<html><head></head></html>', []));
-        self::assertSame('<div>Fragment</div>', $deduplicator->process(
-            '<div>Fragment</div>',
-            ['og:title' => 'Title']
-        ));
+        self::assertSame('<html><head></head></html>', $deduplicator->process('<html><head></head></html>'));
+        self::assertSame('<div>Fragment</div>', $deduplicator->process('<div>Fragment</div>'));
     }
 
     public function testDoesNotRemoveTwitterTagsThatMosaicoraDidNotGenerate(): void
     {
-        $html = '<html><head><meta name="twitter:image" content="existing"></head></html>';
+        $deduplicator = new HeadMetadataDeduplicator();
+        $canonical = $deduplicator->markCanonicalTags(
+            '<meta property="og:title" content="Title"/>',
+            ['og:title' => 'Title']
+        );
+        $html = '<html><head><meta name="twitter:image" content="existing">'
+            . $canonical
+            . '</head></html>';
 
-        $result = $this->createDeduplicator()->process($html, ['og:title' => 'Title']);
+        $result = $deduplicator->process($html);
 
         self::assertStringContainsString('<meta name="twitter:image" content="existing">', $result);
         self::assertStringContainsString('<meta property="og:title" content="Title"/>', $result);
+        self::assertStringNotContainsString('data-mosaicora-opengraph', $result);
     }
 
-    private function createDeduplicator(): HeadMetadataDeduplicator
+    public function testMarksOnlyCanonicalTagNames(): void
     {
-        return new HeadMetadataDeduplicator(new Escaper());
+        $result = (new HeadMetadataDeduplicator())->markCanonicalTags(
+            '<meta property="og:title" content="Title"/>'
+            . '<meta name="description" content="Description"/>',
+            ['og:title' => 'Title']
+        );
+
+        self::assertSame(1, substr_count($result, 'data-mosaicora-opengraph'));
+        self::assertStringContainsString(
+            '<meta name="description" content="Description"/>',
+            $result
+        );
     }
 }

@@ -12,7 +12,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\BatchRequestItemInterface;
-use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Mosaicora\OpenGraph\Model\Data\OpenGraphMetadata;
@@ -20,6 +19,7 @@ use Mosaicora\OpenGraph\Model\GraphQl\MetadataFormatter;
 use Mosaicora\OpenGraph\Model\GraphQl\OpenGraphAttributeCodes;
 use Mosaicora\OpenGraph\Model\GraphQl\Resolver\ProductOpenGraph;
 use Mosaicora\OpenGraph\Model\MetadataProvider;
+use Mosaicora\OpenGraph\Test\Unit\Stub\GraphQlContextExtension;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 
@@ -103,52 +103,10 @@ class ProductOpenGraphTest extends TestCase
     {
         $store = $this->createStub(StoreInterface::class);
         $store->method('getId')->willReturn(7);
-        $extension = $this->contextExtension($store);
         $context = $this->createStub(ContextInterface::class);
-        $context->method('getExtensionAttributes')->willReturn($extension);
+        $context->method('getExtensionAttributes')->willReturn(new GraphQlContextExtension($store));
 
         return $context;
-    }
-
-    private function contextExtension(StoreInterface $store): ContextExtensionInterface
-    {
-        return new class ($store) implements ContextExtensionInterface {
-            public function __construct(
-                private StoreInterface $store
-            ) {
-            }
-
-            public function getStore(): StoreInterface
-            {
-                return $this->store;
-            }
-
-            public function setStore(StoreInterface $store): self
-            {
-                $this->store = $store;
-                return $this;
-            }
-
-            public function getIsCustomer(): bool
-            {
-                return false;
-            }
-
-            public function setIsCustomer(bool $isCustomer): self
-            {
-                return $this;
-            }
-
-            public function getCustomerGroupId(): int
-            {
-                return 0;
-            }
-
-            public function setCustomerGroupId(int $customerGroupId): self
-            {
-                return $this;
-            }
-        };
     }
 
     private function metadata(string $identifier): OpenGraphMetadata

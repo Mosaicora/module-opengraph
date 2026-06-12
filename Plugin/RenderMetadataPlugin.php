@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Mosaicora\OpenGraph\Plugin;
 
 use Magento\Framework\View\Page\Config\Renderer;
-use Mosaicora\OpenGraph\Model\Applier\AppliedTagRegistry;
+use Mosaicora\OpenGraph\Model\Applier\HeadMetadataDeduplicator;
 use Mosaicora\OpenGraph\Model\Applier\MetaTagApplier;
 use Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
@@ -21,28 +21,29 @@ class RenderMetadataPlugin
         private readonly PageContextResolver $contextResolver,
         private readonly CompositeTagBuilder $tagBuilder,
         private readonly MetaTagApplier $tagApplier,
-        private readonly AppliedTagRegistry $tagRegistry
+        private readonly HeadMetadataDeduplicator $deduplicator
     ) {
     }
 
-    public function beforeRenderMetadata(Renderer $subject): void
+    /**
+     * @param callable(): string $proceed
+     */
+    public function aroundRenderMetadata(Renderer $subject, callable $proceed): string
     {
-        if (!$this->config->isEnabled()) {
-            return;
+        $tags = [];
+        if ($this->config->isEnabled()) {
+            $context = $this->contextResolver->resolve();
+            if ($context !== null) {
+                $tags = $this->tagBuilder->build($context);
+                $this->tagApplier->apply($tags);
+            }
         }
 
-        $context = $this->contextResolver->resolve();
-        if ($context === null) {
-            return;
+        $result = str_replace('<meta name="product:', '<meta property="product:', $proceed());
+        if ($tags === [] || !$this->config->isRemoveCompetingTagsEnabled()) {
+            return $result;
         }
 
-        $tags = $this->tagBuilder->build($context);
-        $this->tagApplier->apply($tags);
-        $this->tagRegistry->set($tags);
-    }
-
-    public function afterRenderMetadata(Renderer $subject, string $result): string
-    {
-        return str_replace('<meta name="product:', '<meta property="product:', $result);
+        return $this->deduplicator->markCanonicalTags($result, $tags);
     }
 }

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The project follows a simple, human-readable release log.
 
+## [1.0.3] - 2026-06-13
+
+- Restored Magento 2.4.6 compatibility by removing dependencies on framework APIs introduced in later releases.
+- Made social metadata deduplication stateless and safe for long-running application workers.
+- Reused loaded CMS home pages in GraphQL resolution and preserved cache identities across supported versions.
+
 ## [1.0.2] - 2026-06-12
 
 - Added an optional, store-scoped setting that removes competing social metadata tags and keeps Mosaicora's values.
@@ -27,3 +33,4 @@ The project follows a simple, human-readable release log.
 [1.0.0]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.0
 [1.0.1]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.1
 [1.0.2]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.2
+[1.0.3]: https://github.com/Mosaicora/module-opengraph/releases/tag/v1.0.3
