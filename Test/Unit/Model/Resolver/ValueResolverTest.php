@@ -18,7 +18,9 @@ class ValueResolverTest extends TestCase
 {
     public function testCustomValueWins(): void
     {
-        $resolver = new ValueResolver($this->createStub(DefaultAttributeMatcher::class), new TextSanitizer());
+        $sanitizer = $this->createStub(TextSanitizer::class);
+        $sanitizer->method('clean')->willReturn('Custom title');
+        $resolver = new ValueResolver($this->createStub(DefaultAttributeMatcher::class), $sanitizer);
         $entity = new DataObject(
             [
             'og_title_mode' => ConfigProvider::MODE_CUSTOM,
@@ -35,7 +37,9 @@ class ValueResolverTest extends TestCase
 
     public function testAttributeValueWinsWhenModeIsAttribute(): void
     {
-        $resolver = new ValueResolver($this->createStub(DefaultAttributeMatcher::class), new TextSanitizer());
+        $sanitizer = $this->createStub(TextSanitizer::class);
+        $sanitizer->method('clean')->willReturn('Product Name');
+        $resolver = new ValueResolver($this->createStub(DefaultAttributeMatcher::class), $sanitizer);
         $entity = new DataObject(
             [
             'og_title_mode' => ConfigProvider::MODE_ATTRIBUTE,
@@ -59,7 +63,9 @@ class ValueResolverTest extends TestCase
             ->with($this->isInstanceOf(DataObject::class), 'product', 'title', null)
             ->willReturn('Matched title');
 
-        $resolver = new ValueResolver($matcher, new TextSanitizer());
+        $sanitizer = $this->createStub(TextSanitizer::class);
+        $sanitizer->method('clean')->willReturn('Matched title');
+        $resolver = new ValueResolver($matcher, $sanitizer);
 
         self::assertSame(
             'Matched title',

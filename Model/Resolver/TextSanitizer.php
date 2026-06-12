@@ -7,20 +7,22 @@ declare(strict_types=1);
 
 namespace Mosaicora\OpenGraph\Model\Resolver;
 
+use Magento\Framework\Filter\FilterManager;
+
 class TextSanitizer
 {
+    public function __construct(
+        private readonly FilterManager $filterManager
+    ) {
+    }
+
     public function clean(mixed $value, int $maxLength = 300): string
     {
         if (is_array($value)) {
             return '';
         }
 
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
-        $text = html_entity_decode(
-            strip_tags((string)$value),
-            ENT_QUOTES | ENT_HTML5,
-            'UTF-8'
-        );
+        $text = $this->filterManager->removeTags((string)$value);
         $text = preg_replace('/\s+/u', ' ', $text) ?: '';
         $text = trim($text);
 

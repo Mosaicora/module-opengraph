@@ -10,14 +10,17 @@ namespace Mosaicora\OpenGraph\Test\Unit\Model\GraphQl;
 use Mosaicora\OpenGraph\Model\Data\OpenGraphMetadata;
 use Mosaicora\OpenGraph\Model\Data\OpenGraphTag;
 use Mosaicora\OpenGraph\Model\GraphQl\MetadataFormatter;
+use Mosaicora\OpenGraph\Model\Resolver\TextSanitizer;
 use PHPUnit\Framework\TestCase;
 
 class MetadataFormatterTest extends TestCase
 {
     public function testFormatsServiceContractAsGraphQlData(): void
     {
-        $tag = new OpenGraphTag();
-        $tag->setName('og:title')->setContent('Example');
+        $sanitizer = $this->createStub(TextSanitizer::class);
+        $sanitizer->method('clean')->willReturn('Example & title');
+        $tag = new OpenGraphTag($sanitizer);
+        $tag->setName('og:title')->setContent('<strong>Example</strong> &amp; title');
         $metadata = new OpenGraphMetadata();
         $metadata->setPageType('product')
             ->setIdentifier('shirt-blue')
@@ -32,7 +35,7 @@ class MetadataFormatterTest extends TestCase
                 'store_id' => 7,
                 'enabled' => true,
                 'tags' => [
-                    ['name' => 'og:title', 'content' => 'Example'],
+                    ['name' => 'og:title', 'content' => 'Example & title'],
                 ],
             ],
             (new MetadataFormatter())->format($metadata)

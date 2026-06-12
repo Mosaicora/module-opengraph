@@ -18,7 +18,7 @@ use Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
 use Mosaicora\OpenGraph\Model\Context\PageContext;
 use Mosaicora\OpenGraph\Model\Data\OpenGraphMetadata;
-use Mosaicora\OpenGraph\Model\Data\OpenGraphTag;
+use Mosaicora\OpenGraph\Model\Data\OpenGraphTagFactory;
 
 class MetadataProvider
 {
@@ -28,7 +28,8 @@ class MetadataProvider
         private readonly ConfigProvider $config,
         private readonly ScopeConfigInterface $scopeConfig,
         private readonly CmsPageLoader $cmsPageLoader,
-        private readonly CompositeTagBuilder $tagBuilder
+        private readonly CompositeTagBuilder $tagBuilder,
+        private readonly OpenGraphTagFactory $tagFactory
     ) {
     }
 
@@ -122,7 +123,7 @@ class MetadataProvider
     {
         $tagItems = [];
         foreach ($tags as $name => $content) {
-            $tag = new OpenGraphTag();
+            $tag = $this->tagFactory->create();
             $tagItems[] = $tag->setName((string)$name)->setContent((string)$content);
         }
 

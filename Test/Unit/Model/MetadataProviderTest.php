@@ -13,7 +13,10 @@ use Mosaicora\OpenGraph\Model\Builder\CompositeTagBuilder;
 use Mosaicora\OpenGraph\Model\CmsPageLoader;
 use Mosaicora\OpenGraph\Model\Config\ConfigProvider;
 use Mosaicora\OpenGraph\Model\Context\PageContext;
+use Mosaicora\OpenGraph\Model\Data\OpenGraphTag;
+use Mosaicora\OpenGraph\Model\Data\OpenGraphTagFactory;
 use Mosaicora\OpenGraph\Model\MetadataProvider;
+use Mosaicora\OpenGraph\Model\Resolver\TextSanitizer;
 use PHPUnit\Framework\TestCase;
 
 class MetadataProviderTest extends TestCase
@@ -31,14 +34,14 @@ class MetadataProviderTest extends TestCase
                 static fn (PageContext $context): bool => $context->getType() === PageContext::TYPE_PRODUCT
                     && $context->getEntity() === $product
             ))
-            ->willReturn(['og:title' => 'Example title']);
+            ->willReturn(['og:title' => '<strong>Example</strong> &amp; title']);
 
         $metadata = $this->createProvider($config, $tagBuilder)->getProduct($product, 7);
 
         self::assertSame('product', $metadata->getPageType());
         self::assertSame('shirt-blue', $metadata->getIdentifier());
         self::assertSame('og:title', $metadata->getTags()[0]->getName());
-        self::assertSame('Example title', $metadata->getTags()[0]->getContent());
+        self::assertSame('Example & title', $metadata->getTags()[0]->getContent());
     }
 
     public function testDisabledModuleReturnsEmptyTagsWithoutBuilding(): void
@@ -60,11 +63,19 @@ class MetadataProviderTest extends TestCase
         ConfigProvider $config,
         CompositeTagBuilder $tagBuilder
     ): MetadataProvider {
+        $sanitizer = $this->createStub(TextSanitizer::class);
+        $sanitizer->method('clean')->willReturn('Example & title');
+        $tagFactory = $this->createStub(OpenGraphTagFactory::class);
+        $tagFactory->method('create')->willReturnCallback(
+            static fn (): OpenGraphTag => new OpenGraphTag($sanitizer)
+        );
+
         return new MetadataProvider(
             $config,
             $this->createStub(ScopeConfigInterface::class),
             $this->createStub(CmsPageLoader::class),
-            $tagBuilder
+            $tagBuilder,
+            $tagFactory
         );
     }
 }
