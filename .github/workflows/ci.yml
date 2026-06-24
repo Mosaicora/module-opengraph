@@ -13,13 +13,15 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   checks:
     name: PHP ${{ matrix.php }}
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     strategy:
       fail-fast: false
       matrix:
@@ -27,9 +29,12 @@ jobs:
           - '8.1'
           - '8.5'
 
+    env:
+      COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
+
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -37,50 +42,55 @@ jobs:
           php-version: ${{ matrix.php }}
           tools: composer:v2
           coverage: none
+          extensions: bcmath, ctype, curl, dom, fileinfo, gd, iconv, intl, mbstring, openssl, pdo_mysql, simplexml, soap, sockets, sodium, xsl, zip
+          ini-values: memory_limit=-1
 
-      - name: Configure Composer authentication
-        env:
-          COMPOSER_AUTH_JSON: ${{ secrets.COMPOSER_AUTH }}
+      - name: Configure Magento Composer repository
         shell: bash
         run: |
-          if [[ -z "${COMPOSER_AUTH_JSON}" ]]; then
+          set -euo pipefail
+
+          if [[ -z "${COMPOSER_AUTH:-}" ]]; then
             echo "::error::The COMPOSER_AUTH repository secret is not configured."
+            echo "::error::Create it as JSON containing http-basic credentials for repo.magento.com."
             exit 1
           fi
 
-          php -r '
-              $auth = getenv("COMPOSER_AUTH_JSON");
-              json_decode($auth, true, 512, JSON_THROW_ON_ERROR);
-              file_put_contents("auth.json", $auth . PHP_EOL);
-          '
-          chmod 600 auth.json
+          php -r 'json_decode(getenv("COMPOSER_AUTH"), true, 512, JSON_THROW_ON_ERROR);'
+
+          composer config --global repositories.magento composer https://repo.magento.com/
 
       - name: Validate Composer metadata
-        run: composer validate --no-check-lock
+        run: composer validate --strict --no-check-lock
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Audit dependencies
-        run: composer audit --locked --abandoned=report
+        run: composer audit --locked --abandoned=report --no-interaction
 
       - name: Validate PHP syntax
         shell: bash
         run: |
-          find Api Block Controller Model Observer Plugin Setup Test \
+          set -euo pipefail
+
+          find . \
+            -path './vendor' -prune -o \
+            -path './.git' -prune -o \
             -type f -name '*.php' -print0 \
-            | xargs -0 -n1 php -l
-          php -l registration.php
+            | xargs -0 -r -n1 php -l
 
       - name: Validate XML
         shell: bash
         run: |
+          set -euo pipefail
+
           while IFS= read -r -d '' file; do
             php -r '
-                $document = new DOMDocument();
-                if (!$document->load($argv[1])) {
-                    exit(1);
-                }
+              $document = new DOMDocument();
+              if (!$document->load($argv[1])) {
+                  exit(1);
+              }
             ' "${file}"
           done < <(find etc view -type f -name '*.xml' -print0)
 
@@ -90,41 +100,42 @@ jobs:
       - name: Run unit tests
         run: composer test
 
-      - name: Remove Composer authentication
-        if: always()
-        run: rm -f auth.json
-
   release:
     name: Publish GitHub release
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
       - checks
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Validate release metadata
         shell: bash
         run: |
+          set -euo pipefail
+
           tag="${GITHUB_REF_NAME}"
+
           if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::Release tag must use vX.Y.Z format."
             exit 1
           fi
 
           version="${tag#v}"
+
           composer_version="$(php -r '
-              $composer = json_decode(file_get_contents("composer.json"), true, 512, JSON_THROW_ON_ERROR);
-              echo $composer["version"] ?? "";
+            $composer = json_decode(file_get_contents("composer.json"), true, 512, JSON_THROW_ON_ERROR);
+            echo $composer["version"] ?? "";
           ')"
 
-          if [[ "${composer_version}" != "${version}" ]]; then
+          if [[ -n "${composer_version}" && "${composer_version}" != "${version}" ]]; then
             echo "::error::composer.json version ${composer_version} does not match tag ${tag}."
             exit 1
           fi
@@ -137,13 +148,17 @@ jobs:
       - name: Build release archive
         shell: bash
         run: |
+          set -euo pipefail
+
           version="${GITHUB_REF_NAME#v}"
           archive="mosaicora-module-opengraph-${version}.zip"
+
           git archive \
             --format=zip \
             --prefix="mosaicora-module-opengraph-${version}/" \
             --output="${archive}" \
             "${GITHUB_REF_NAME}"
+
           echo "RELEASE_ARCHIVE=${archive}" >> "${GITHUB_ENV}"
 
       - name: Publish GitHub release
